@@ -1,1099 +1,196 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="Bharath Kumar Kondur - GenAI and AI/MLOps Engineer in Rome building agentic RAG systems, LangChain/LangGraph workflows, Dockerized AI services, data pipelines and production ML infrastructure.">
-<title>Bharath Kumar Kondur | GenAI Engineer &middot; AI / MLOps</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  color-scheme: dark;
-  --bg: #050608;
-  --bg-2: #0a0c11;
-  --panel: #0f1218;
-  --panel-2: #14181f;
-  --panel-3: #1a1f28;
-  --ink: #f0f4fa;
-  --ink-2: #c8d2dc;
-  --muted: #7d8794;
-  --line: rgba(180, 200, 220, 0.08);
-  --line-2: rgba(180, 200, 220, 0.16);
-  --cyan: #4dd9ff;
-  --cyan-glow: rgba(77, 217, 255, 0.4);
-  --green: #5cf5a4;
-  --amber: #ffb946;
-  --violet: #a584ff;
-  --font: "Inter", system-ui, sans-serif;
-  --font-display: "Space Grotesk", "Inter", sans-serif;
-  --mono: "JetBrains Mono", monospace;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: var(--font);
-  line-height: 1.6;
-  overflow-x: hidden;
-}
-#bg-canvas {
-  position: fixed; top: 0; left: 0;
-  width: 100vw; height: 100vh;
-  z-index: 0; pointer-events: none;
-}
-body::before {
-  content: ''; position: fixed; inset: 0;
-  pointer-events: none; z-index: 1;
-  background-image:
-    linear-gradient(rgba(180, 200, 220, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(180, 200, 220, 0.02) 1px, transparent 1px);
-  background-size: 64px 64px;
-  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 90%);
-}
-body::after {
-  content: ''; position: fixed; inset: 0;
-  pointer-events: none; z-index: 2;
-  background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px);
-  opacity: 0.5;
-}
-main, nav, footer { position: relative; z-index: 10; }
-
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 18px clamp(20px, 4vw, 56px);
-  background: rgba(5, 6, 8, 0.7);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--line);
-}
-.brand { display: flex; align-items: center; gap: 14px; text-decoration: none; }
-.brand-mark {
-  width: 38px; height: 38px;
-  display: grid; place-items: center;
-  border: 1px solid var(--line-2);
-  background: linear-gradient(135deg, var(--panel-3), var(--panel));
-  font-family: var(--mono); font-weight: 700; font-size: 14px;
-  color: var(--cyan); position: relative;
-}
-.brand-mark::before {
-  content: ''; position: absolute; inset: -1px;
-  border: 1px solid var(--cyan); opacity: 0.3;
-  pointer-events: none;
-  animation: pulse-mark 3s ease-in-out infinite;
-}
-@keyframes pulse-mark {
-  0%, 100% { opacity: 0.15; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(1.05); }
-}
-.brand-text strong {
-  display: block; font-size: 14px; font-weight: 600;
-  letter-spacing: -0.01em; color: var(--ink);
-}
-.brand-text span {
-  display: block; font-size: 11px;
-  color: var(--muted); font-family: var(--mono);
-}
-.nav-links {
-  display: flex; gap: 4px; padding: 4px;
-  border: 1px solid var(--line);
-  background: rgba(15, 18, 24, 0.5);
-}
-.nav-links a {
-  padding: 8px 14px; color: var(--muted);
-  font-size: 12px; font-family: var(--mono); font-weight: 500;
-  text-decoration: none; transition: all 200ms;
-  letter-spacing: 0.02em;
-}
-.nav-links a:hover { color: var(--cyan); background: rgba(77, 217, 255, 0.06); }
-.status {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 14px;
-  border: 1px solid rgba(92, 245, 164, 0.3);
-  background: rgba(92, 245, 164, 0.06);
-  color: var(--green); font-size: 11px;
-  font-family: var(--mono); font-weight: 500;
-  text-transform: uppercase; letter-spacing: 0.06em;
-}
-.status::before {
-  content: ''; width: 6px; height: 6px;
-  border-radius: 999px; background: currentColor;
-  box-shadow: 0 0 12px currentColor;
-  animation: blink 2s ease-in-out infinite;
-}
-@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
-
-.hero {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  align-items: center;
-  gap: clamp(40px, 5vw, 80px);
-  padding: 130px clamp(20px, 4vw, 56px) 80px;
-}
-.hero-left { z-index: 5; }
-.eyebrow {
-  display: inline-block; padding: 5px 12px;
-  border: 1px solid var(--cyan);
-  background: rgba(77, 217, 255, 0.06);
-  color: var(--cyan);
-  font-family: var(--mono); font-size: 11px;
-  font-weight: 500; text-transform: uppercase;
-  letter-spacing: 0.1em; margin-bottom: 28px;
-}
-.eyebrow::before { content: '◆ '; opacity: 0.6; }
-.hero h1 {
-  font-family: var(--font-display);
-  font-size: clamp(48px, 7vw, 90px);
-  font-weight: 700; line-height: 0.96;
-  letter-spacing: -0.035em; margin-bottom: 24px;
-}
-.hero h1 .accent {
-  background: linear-gradient(135deg, var(--cyan), var(--violet));
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent; display: inline-block;
-}
-.hero-tag {
-  font-family: var(--mono); font-size: 13px;
-  color: var(--muted); margin-bottom: 28px;
-  letter-spacing: 0.02em;
-}
-.hero-tag .sep { color: var(--cyan); margin: 0 10px; }
-.hero-lead {
-  font-size: 17px; color: var(--ink-2);
-  max-width: 560px; margin-bottom: 36px;
-  font-weight: 300; line-height: 1.7;
-}
-.hero-lead em { color: var(--cyan); font-style: normal; font-weight: 500; }
-.hero-actions {
-  display: flex; gap: 12px; flex-wrap: wrap;
-  margin-bottom: 40px;
-}
-.btn {
-  display: inline-flex; align-items: center; justify-content: center;
-  gap: 8px; padding: 13px 22px;
-  font-family: var(--mono); font-size: 12px; font-weight: 600;
-  letter-spacing: 0.06em; text-transform: uppercase;
-  text-decoration: none; transition: all 200ms;
-  cursor: pointer; border: 1px solid; position: relative; overflow: hidden;
-}
-.btn-primary {
-  background: var(--cyan); color: var(--bg);
-  border-color: var(--cyan);
-  box-shadow: 0 0 32px rgba(77, 217, 255, 0.3);
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 48px rgba(77, 217, 255, 0.5);
-}
-.btn-ghost {
-  background: transparent; color: var(--ink);
-  border-color: var(--line-2);
-}
-.btn-ghost:hover {
-  border-color: var(--cyan); color: var(--cyan);
-  transform: translateY(-2px);
-}
-.hero-metrics {
-  display: grid; grid-template-columns: repeat(3, 1fr);
-  gap: 16px; max-width: 540px;
-}
-.metric { border-left: 2px solid var(--cyan); padding: 4px 0 4px 14px; }
-.metric-value {
-  font-family: var(--font-display); font-size: 28px;
-  font-weight: 700; color: var(--ink);
-  line-height: 1; margin-bottom: 4px;
-}
-.metric-label {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.hero-right { position: relative; z-index: 5; perspective: 1200px; }
-.hologram {
-  position: relative;
-  border: 1px solid var(--line-2);
-  background: linear-gradient(135deg, rgba(15, 18, 24, 0.9), rgba(20, 24, 31, 0.7));
-  backdrop-filter: blur(24px);
-  padding: 32px;
-  transform: rotateY(-8deg) rotateX(2deg);
-  transition: transform 400ms ease;
-  box-shadow: 0 32px 80px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-.hologram:hover { transform: rotateY(-4deg) rotateX(1deg); }
-.hologram::before {
-  content: ''; position: absolute;
-  top: 0; left: 0; right: 0; height: 1px;
-  background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-  opacity: 0.6;
-}
-.holo-label {
-  position: absolute; top: -8px; left: 24px;
-  background: var(--bg-2); padding: 0 12px;
-  font-family: var(--mono); font-size: 10px;
-  color: var(--cyan); letter-spacing: 0.15em;
-}
-.holo-row {
-  display: flex; justify-content: space-between;
-  align-items: flex-start;
-  padding: 12px 0; border-bottom: 1px solid var(--line); gap: 16px;
-}
-.holo-row:last-child { border-bottom: none; padding-bottom: 0; }
-.holo-row:first-of-type { padding-top: 0; }
-.holo-key {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.1em; white-space: nowrap;
-}
-.holo-val {
-  font-family: var(--mono); font-size: 13px;
-  color: var(--ink); text-align: right; font-weight: 500;
-}
-.holo-val .highlight { color: var(--cyan); }
-.holo-val .green { color: var(--green); }
-
-section {
-  padding: 100px clamp(20px, 4vw, 56px);
-  position: relative; z-index: 5;
-}
-.section-head { max-width: 800px; margin-bottom: 64px; }
-.kicker {
-  display: inline-block; font-family: var(--mono);
-  font-size: 11px; color: var(--cyan);
-  text-transform: uppercase; letter-spacing: 0.15em;
-  margin-bottom: 14px; font-weight: 500;
-}
-.kicker::before { content: '── '; opacity: 0.5; }
-section h2 {
-  font-family: var(--font-display);
-  font-size: clamp(36px, 4.5vw, 56px);
-  font-weight: 700; line-height: 1.05;
-  letter-spacing: -0.03em; color: var(--ink);
-  margin-bottom: 18px;
-}
-section h2 em {
-  background: linear-gradient(135deg, var(--cyan), var(--violet));
-  -webkit-background-clip: text; background-clip: text;
-  color: transparent; font-style: normal;
-}
-.section-head p {
-  font-size: 16px; color: var(--muted);
-  max-width: 640px; font-weight: 300; line-height: 1.7;
-}
-
-.skills-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 18px;
-}
-.skill-card {
-  position: relative; border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(15, 18, 24, 0.6), rgba(10, 12, 17, 0.6));
-  backdrop-filter: blur(8px); padding: 24px;
-  transition: all 300ms; overflow: hidden;
-}
-.skill-card::before {
-  content: ''; position: absolute;
-  top: 0; left: 0; right: 0; height: 2px;
-  background: linear-gradient(90deg, var(--cyan), transparent);
-  transform: scaleX(0); transform-origin: left;
-  transition: transform 400ms;
-}
-.skill-card:hover {
-  border-color: var(--line-2);
-  transform: translateY(-3px);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
-}
-.skill-card:hover::before { transform: scaleX(1); }
-.skill-num {
-  font-family: var(--mono); font-size: 11px;
-  color: var(--cyan); margin-bottom: 6px;
-  letter-spacing: 0.1em;
-}
-.skill-card h3 {
-  font-family: var(--font-display); font-size: 16px;
-  font-weight: 600; margin-bottom: 14px; color: var(--ink);
-}
-.chips { display: flex; flex-wrap: wrap; gap: 6px; }
-.chip {
-  font-family: var(--mono); font-size: 11px;
-  padding: 4px 10px;
-  background: rgba(77, 217, 255, 0.05);
-  border: 1px solid rgba(77, 217, 255, 0.15);
-  color: var(--ink-2); transition: all 200ms;
-  font-weight: 500;
-}
-.chip:hover {
-  background: rgba(77, 217, 255, 0.12);
-  border-color: var(--cyan); color: var(--cyan);
-}
-.chip.primary {
-  background: rgba(77, 217, 255, 0.1);
-  border-color: var(--cyan); color: var(--cyan);
-}
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-  gap: 24px;
-}
-.project-card {
-  position: relative; border: 1px solid var(--line);
-  background: linear-gradient(160deg, rgba(15, 18, 24, 0.85), rgba(8, 10, 14, 0.85));
-  backdrop-filter: blur(8px); padding: 32px;
-  overflow: hidden; transition: all 400ms;
-}
-.project-card::before {
-  content: ''; position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: radial-gradient(circle at top right, rgba(77, 217, 255, 0.08), transparent 60%);
-  opacity: 0; transition: opacity 400ms; pointer-events: none;
-}
-.project-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(77, 217, 255, 0.3);
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
-}
-.project-card:hover::before { opacity: 1; }
-.project-num {
-  font-family: var(--font-display); font-size: 56px;
-  font-weight: 700; color: rgba(77, 217, 255, 0.08);
-  line-height: 0.9; margin-bottom: 16px;
-  letter-spacing: -0.04em;
-}
-.project-meta {
-  font-family: var(--mono); font-size: 10px;
-  color: var(--cyan); text-transform: uppercase;
-  letter-spacing: 0.15em; margin-bottom: 8px;
-}
-.project-card h3 {
-  font-family: var(--font-display); font-size: 22px;
-  font-weight: 700; margin-bottom: 14px; letter-spacing: -0.02em;
-}
-.project-card p.proj-desc {
-  font-size: 14px; color: var(--ink-2);
-  line-height: 1.65; margin-bottom: 16px; font-weight: 300;
-}
-.project-metrics {
-  display: flex; gap: 18px; margin-bottom: 18px;
-  padding: 14px 0;
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-}
-.proj-metric { flex: 1; }
-.proj-metric-num {
-  font-family: var(--font-display); font-size: 22px;
-  font-weight: 700; color: var(--green);
-  line-height: 1; margin-bottom: 3px;
-}
-.proj-metric-label {
-  font-family: var(--mono); font-size: 9px;
-  color: var(--muted); text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-.project-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-family: var(--mono); font-size: 11px;
-  color: var(--cyan); text-decoration: none;
-  font-weight: 600; letter-spacing: 0.06em;
-  text-transform: uppercase; margin-top: 8px;
-}
-.project-link::after { content: '→'; transition: transform 200ms; }
-.project-link:hover::after { transform: translateX(4px); }
-
-.timeline {
-  position: relative; padding-left: 32px; max-width: 900px;
-}
-.timeline::before {
-  content: ''; position: absolute;
-  left: 0; top: 8px; bottom: 8px; width: 1px;
-  background: linear-gradient(to bottom, var(--cyan), transparent);
-}
-.tl-item { position: relative; margin-bottom: 56px; }
-.tl-item:last-child { margin-bottom: 0; }
-.tl-item::before {
-  content: ''; position: absolute;
-  left: -36px; top: 6px;
-  width: 10px; height: 10px;
-  background: var(--bg);
-  border: 2px solid var(--cyan);
-  box-shadow: 0 0 12px var(--cyan-glow);
-}
-.tl-header {
-  display: flex; flex-wrap: wrap;
-  align-items: baseline; gap: 14px; margin-bottom: 6px;
-}
-.tl-header h3 {
-  font-family: var(--font-display); font-size: 22px;
-  font-weight: 700; letter-spacing: -0.02em;
-}
-.tl-company {
-  font-family: var(--mono); font-size: 12px;
-  color: var(--cyan); font-weight: 500;
-}
-.tl-period {
-  font-family: var(--mono); font-size: 11px;
-  color: var(--muted); margin-left: auto;
-  border: 1px solid var(--line-2); padding: 4px 10px;
-}
-.tl-bullets { list-style: none; margin-top: 14px; }
-.tl-bullets li {
-  position: relative; padding: 6px 0 6px 20px;
-  font-size: 14px; color: var(--ink-2);
-  line-height: 1.7; font-weight: 300;
-}
-.tl-bullets li::before {
-  content: '▸'; position: absolute;
-  left: 0; color: var(--cyan); font-size: 11px; top: 8px;
-}
-
-.positioning {
-  display: grid; grid-template-columns: 1.2fr 1fr;
-  gap: 32px; align-items: stretch;
-}
-.position-card {
-  border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(15, 18, 24, 0.85), rgba(10, 12, 17, 0.85));
-  backdrop-filter: blur(12px); padding: 40px;
-  position: relative; overflow: hidden;
-}
-.position-card.glow { border-color: rgba(77, 217, 255, 0.2); }
-.position-card.glow::before {
-  content: ''; position: absolute;
-  top: -50%; left: -20%; width: 60%; height: 200%;
-  background: radial-gradient(circle, rgba(77, 217, 255, 0.06), transparent 70%);
-  pointer-events: none;
-}
-.position-card h3 {
-  font-family: var(--font-display); font-size: 28px;
-  font-weight: 700; letter-spacing: -0.02em; margin-bottom: 14px;
-}
-.position-card p {
-  color: var(--ink-2); margin-bottom: 24px;
-  font-weight: 300; line-height: 1.7;
-}
-.terminal {
-  border: 1px solid var(--line-2);
-  background: rgba(8, 10, 14, 0.95);
-  font-family: var(--mono); font-size: 12px; overflow: hidden;
-}
-.terminal-bar {
-  display: flex; align-items: center; gap: 6px;
-  padding: 10px 14px;
-  background: rgba(15, 18, 24, 0.95);
-  border-bottom: 1px solid var(--line);
-}
-.tdot { width: 9px; height: 9px; border-radius: 50%; }
-.tdot:nth-child(1) { background: #ff5f57; }
-.tdot:nth-child(2) { background: #febc2e; }
-.tdot:nth-child(3) { background: #28c840; }
-.terminal-body { padding: 18px; line-height: 2; }
-.term-line { display: block; }
-.term-prompt { color: var(--cyan); }
-.term-cmd { color: var(--ink); }
-.term-out { color: var(--muted); }
-.term-val { color: var(--amber); font-weight: 600; }
-.term-val.green { color: var(--green); }
-.cursor-blink {
-  display: inline-block; width: 8px; height: 14px;
-  background: var(--cyan); vertical-align: middle;
-  animation: blink 1s step-end infinite;
-}
-
-.contact-grid {
-  display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px;
-}
-.contact-card {
-  border: 1px solid var(--line);
-  background: linear-gradient(135deg, rgba(15, 18, 24, 0.8), rgba(10, 12, 17, 0.8));
-  backdrop-filter: blur(12px); padding: 40px;
-}
-.contact-list { display: grid; gap: 12px; margin-top: 24px; }
-.contact-list a, .contact-list-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 18px;
-  border: 1px solid var(--line);
-  background: rgba(8, 10, 14, 0.5);
-  text-decoration: none; color: var(--ink);
-  transition: all 200ms;
-  font-family: var(--mono); font-size: 13px;
-}
-.contact-list a:hover {
-  border-color: var(--cyan);
-  background: rgba(77, 217, 255, 0.06);
-  transform: translateX(4px);
-}
-.contact-list span:first-child {
-  color: var(--muted); font-size: 11px;
-  text-transform: uppercase; letter-spacing: 0.1em;
-}
-.contact-list strong { color: var(--ink); font-weight: 500; }
-
-footer {
-  padding: 32px clamp(20px, 4vw, 56px);
-  border-top: 1px solid var(--line);
-  background: rgba(5, 6, 8, 0.8);
-  display: flex; justify-content: space-between;
-  flex-wrap: wrap; gap: 14px;
-  font-family: var(--mono); font-size: 11px; color: var(--muted);
-}
-
-@media (max-width: 960px) {
-  .hero { grid-template-columns: 1fr; padding-top: 110px; gap: 40px; }
-  .hero-right { order: -1; }
-  .hologram { transform: none; }
-  .positioning, .contact-grid { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
-}
-@media (max-width: 600px) {
-  .hero-metrics { grid-template-columns: 1fr; }
-  .tl-period { margin-left: 0; }
-  nav { padding: 14px 18px; }
-  .brand-text span { display: none; }
-  .status { display: none; }
-  .contact-card, .position-card { padding: 24px; min-width: 0; }
-  .contact-list a, .contact-list-item {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .contact-list strong {
-    overflow-wrap: anywhere;
-    text-align: left;
-  }
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111313">
+  <title>Bharath Kumar Kondur | AI / ML Engineer &mdash; GenAI &amp; MLOps</title>
+  <meta name="description" content="AI/ML Engineer based in Rome building production GenAI, RAG and MLOps systems. Creator of Thenfold and GridPulse AI, with experience in Python, FastAPI, MLflow, Docker and Kubernetes.">
+  <link rel="canonical" href="https://bharathkondur.github.io/">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Bharath Kumar Kondur | AI / ML Engineer">
+  <meta property="og:description" content="GenAI, MLOps and production AI systems. Explore Thenfold, GridPulse AI and commercial AI engineering experience.">
+  <meta property="og:url" content="https://bharathkondur.github.io/">
+  <meta property="og:image" content="https://bharathkondur.github.io/assets/social-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Bharath Kumar Kondur, AI and Machine Learning Engineer based in Rome">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Bharath Kumar Kondur | AI / ML Engineer">
+  <meta name="twitter:description" content="GenAI, MLOps and production AI systems. Creator of Thenfold and GridPulse AI.">
+  <meta name="twitter:image" content="https://bharathkondur.github.io/assets/social-preview.jpg">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-
-<canvas id="bg-canvas"></canvas>
-
-<nav>
-  <a href="#" class="brand">
-    <div class="brand-mark">BK</div>
-    <div class="brand-text">
-      <strong>Bharath Kumar Kondur</strong>
-      <span>GenAI Engineer &middot; Rome</span>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#main" aria-label="BK Rome, Italy - Bharath Kumar Kondur, home">BK<span class="brand-divider" aria-hidden="true">/</span><span class="brand-location">Rome, Italy</span></a>
+      <nav aria-label="Main navigation">
+        <a href="#work">Selected work</a>
+        <a href="#experience">Experience</a>
+        <a class="nav-contact" href="#contact">Let&#39;s talk <img class="icon" src="assets/icons/arrow-up-right.svg" width="16" height="16" alt=""></a>
+      </nav>
     </div>
-  </a>
-  <div class="nav-links">
-    <a href="#role-fit">Fit</a>
-    <a href="#skills">Skills</a>
-    <a href="#projects">Projects</a>
-    <a href="#experience">Experience</a>
-    <a href="#contact">Contact</a>
-  </div>
-  <div class="status">Rome / Remote ready</div>
-</nav>
-
-<main>
-
-<section class="hero">
-  <div class="hero-left">
-    <span class="eyebrow">Rome &middot; Full remote ready &middot; English collaboration</span>
-    <h1>GenAI Engineer for<br><span class="accent">agentic RAG.</span></h1>
-    <p class="hero-tag">LangChain <span class="sep">&middot;</span> LangGraph <span class="sep">&middot;</span> RAG Optimisation <span class="sep">&middot;</span> Dockerized AI</p>
-    <p class="hero-lead">AI/MLOps engineer building <em>LLM-powered workflows</em>, custom logic flows, agentic RAG systems, and production AI services. Strong match for consulting teams implementing GenAI modules, data pipelines, system integrations, and containerized AI workloads.</p>
-    <div class="hero-actions">
-      <a href="Bharath_Kondur_AI_Engineer.pdf" download class="btn btn-primary">Download CV</a>
-      <a href="#projects" class="btn btn-ghost">View GenAI Work</a>
-      <a href="#contact" class="btn btn-ghost">Get in touch</a>
-    </div>
-    <div class="hero-metrics">
-      <div class="metric"><div class="metric-value">LangGraph</div><div class="metric-label">Agentic RAG</div></div>
-      <div class="metric"><div class="metric-value">86.4%</div><div class="metric-label">LLM Quality</div></div>
-      <div class="metric"><div class="metric-value">Docker</div><div class="metric-label">AI Workloads</div></div>
-    </div>
-  </div>
-
-  <div class="hero-right">
-    <div class="hologram">
-      <span class="holo-label">ROLE_MATCH.json</span>
-      <div class="holo-row"><span class="holo-key">Target</span><span class="holo-val">GenAI Engineer</span></div>
-      <div class="holo-row"><span class="holo-key">Location</span><span class="holo-val highlight">Rome &middot; Full remote</span></div>
-      <div class="holo-row"><span class="holo-key">Agents</span><span class="holo-val">LangChain &middot; LangGraph<br>RAG &middot; FAISS &middot; Ollama</span></div>
-      <div class="holo-row"><span class="holo-key">Integration</span><span class="holo-val">FastAPI &middot; REST APIs<br>Docker &middot; CI/CD</span></div>
-      <div class="holo-row"><span class="holo-key">Data</span><span class="holo-val">PostgreSQL &middot; MongoDB<br>MinIO &middot; MQTT</span></div>
-      <div class="holo-row"><span class="holo-key">Cloud</span><span class="holo-val">AWS &middot; Azure &middot; GCP<br>Bedrock</span></div>
-      <div class="holo-row"><span class="holo-key">Languages</span><span class="holo-val">English &middot; Italian<br>Hindi &middot; Telugu</span></div>
-      <div class="holo-row"><span class="holo-key">Ramp</span><span class="holo-val">CrewAI &middot; GenWizard<br>AgentManager</span></div>
-      <div class="holo-row"><span class="holo-key">Status</span><span class="holo-val green">&gt; Available</span></div>
-    </div>
-  </div>
-</section>
-
-<section id="role-fit">
-  <div class="section-head">
-    <span class="kicker">01 &middot; Role Match</span>
-    <h2>Built for a <em>GenAI Engineer</em> brief</h2>
-    <p>Focused alignment for Telco consulting work: custom AI modules, logic flows, agent orchestration, RAG optimisation, data pipelines, system integration, and Dockerized delivery.</p>
-  </div>
-  <div class="skills-grid">
-    <div class="skill-card">
-      <div class="skill-num">01</div>
-      <h3>Agentic Workflows</h3>
-      <div class="chips">
-        <span class="chip primary">LangChain</span><span class="chip primary">LangGraph</span>
-        <span class="chip">Custom flows</span><span class="chip">Tool routing</span>
-        <span class="chip">Query rewrite</span><span class="chip">Answer grading</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">02</div>
-      <h3>RAG Optimisation</h3>
-      <div class="chips">
-        <span class="chip primary">RAG</span><span class="chip primary">FAISS</span>
-        <span class="chip">Semantic retrieval</span><span class="chip">Chunking</span>
-        <span class="chip">Hallucination checks</span><span class="chip">Evaluation loops</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">03</div>
-      <h3>Integration Delivery</h3>
-      <div class="chips">
-        <span class="chip primary">FastAPI</span><span class="chip primary">Docker</span>
-        <span class="chip">REST APIs</span><span class="chip">Async Python</span>
-        <span class="chip">Data pipelines</span><span class="chip">System integration</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">04</div>
-      <h3>Consulting Readiness</h3>
-      <div class="chips">
-        <span class="chip primary">English</span><span class="chip primary">Rome</span>
-        <span class="chip">Full remote</span><span class="chip">EU / India teams</span>
-        <span class="chip">Telco context</span><span class="chip">Client delivery</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="skills">
-  <div class="section-head">
-    <span class="kicker">02 &middot; Capabilities</span>
-    <h2>GenAI and <em>MLOps</em> toolkit</h2>
-    <p>Practical stack for building, integrating, deploying, and observing LLM applications. Strongest fit: agentic RAG, API-backed AI modules, Docker workloads, and data-aware system integration.</p>
-  </div>
-  <div class="skills-grid">
-    <div class="skill-card">
-      <div class="skill-num">01</div>
-      <h3>GenAI &middot; Agents &middot; RAG</h3>
-      <div class="chips">
-        <span class="chip primary">LangChain</span><span class="chip primary">LangGraph</span>
-        <span class="chip primary">RAG optimisation</span><span class="chip">FAISS</span>
-        <span class="chip">Ollama</span><span class="chip">Prompt engineering</span>
-        <span class="chip">LLM evaluation</span><span class="chip">CrewAI</span>
-        <span class="chip">LLM evaluation</span><span class="chip">ChromaDB</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">02</div>
-      <h3>LLMs &middot; Fine-tuning</h3>
-      <div class="chips">
-        <span class="chip primary">Hugging Face</span><span class="chip primary">LoRA</span>
-        <span class="chip">Qwen</span><span class="chip">Llama</span>
-        <span class="chip">Mistral</span><span class="chip">PyTorch</span>
-        <span class="chip">Domain adaptation</span><span class="chip">Hallucination testing</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">03</div>
-      <h3>AI Serving &middot; Integration</h3>
-      <div class="chips">
-        <span class="chip primary">FastAPI</span><span class="chip primary">Docker</span>
-        <span class="chip">REST APIs</span><span class="chip">WebSocket</span>
-        <span class="chip">Async Python</span><span class="chip">System integration</span>
-        <span class="chip">Custom modules</span><span class="chip">Data pipelines</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">04</div>
-      <h3>Cloud &middot; MLOps</h3>
-      <div class="chips">
-        <span class="chip primary">Kubernetes</span><span class="chip primary">GitHub Actions</span>
-        <span class="chip">GitLab CI/CD</span><span class="chip">AWS</span>
-        <span class="chip">Linux</span><span class="chip">AWS Bedrock-ready</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">05</div>
-      <h3>Data &middot; Storage &middot; Streams</h3>
-      <div class="chips">
-        <span class="chip primary">PostgreSQL</span><span class="chip primary">MongoDB</span>
-        <span class="chip">MinIO</span><span class="chip">SQLAlchemy</span>
-        <span class="chip">MQTT</span><span class="chip">Redis</span>
-        <span class="chip">Batch writes</span><span class="chip">Streaming data</span>
-      </div>
-    </div>
-    <div class="skill-card">
-      <div class="skill-num">06</div>
-      <h3>Computer Vision &middot; Edge AI</h3>
-      <div class="chips">
-        <span class="chip primary">YOLOv8</span><span class="chip primary">OpenCV</span>
-        <span class="chip">OCR</span><span class="chip">DeepSORT</span>
-        <span class="chip">TensorRT</span><span class="chip">ONNX</span>
-        <span class="chip">Grafana</span><span class="chip">Prometheus</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section id="projects">
-  <div class="section-head">
-    <span class="kicker">03 &middot; Featured Work</span>
-    <h2>Relevant <em>GenAI proof</em></h2>
-    <p>Projects selected for this role: agentic RAG, LLM evaluation, domain adaptation, Docker/API delivery, data-backed integrations, and production-minded implementation.</p>
-  </div>
-  <div class="projects-grid">
-
-    <article class="project-card">
-      <div class="project-num">01</div>
-      <p class="project-meta">GenAI &middot; Agentic RAG</p>
-      <h3>Self-Correcting RAG Agent</h3>
-      <p class="proj-desc">Enterprise-style RAG system with a LangGraph retrieve -&gt; grade -&gt; rewrite -&gt; generate loop. It checks relevance and hallucination risk, rewrites weak queries, and returns better grounded answers through a FastAPI service.</p>
-      <div class="project-metrics">
-        <div class="proj-metric"><div class="proj-metric-num">LangGraph</div><div class="proj-metric-label">Logic flow</div></div>
-        <div class="proj-metric"><div class="proj-metric-num">Docker</div><div class="proj-metric-label">Workload ready</div></div>
-      </div>
-      <div class="chips">
-        <span class="chip primary">LangChain</span><span class="chip primary">LangGraph</span>
-        <span class="chip">FastAPI</span><span class="chip">FAISS</span>
-        <span class="chip">OpenAI</span><span class="chip">Ollama</span>
-      </div>
-      <a class="project-link" href="https://github.com/Bharathkondur/Self-Correcting-RAG-for-Docs" target="_blank" rel="noreferrer">View on GitHub</a>
-    </article>
-
-    <article class="project-card">
-      <div class="project-num">02</div>
-      <p class="project-meta">LLM &middot; Evaluation</p>
-      <h3>Fine-Tuned Energy LLM</h3>
-      <p class="proj-desc">Fine-tuned Qwen2.5-3B on 12,000 petroleum engineering examples using LoRA. Built an evaluation framework for quality scoring, technical accuracy, hallucination detection, latency, and reproducible model assessment.</p>
-      <div class="project-metrics">
-        <div class="proj-metric"><div class="proj-metric-num">86.4%</div><div class="proj-metric-label">Quality score</div></div>
-        <div class="proj-metric"><div class="proj-metric-num">0%</div><div class="proj-metric-label">Hallucinations</div></div>
-      </div>
-      <div class="chips">
-        <span class="chip primary">Qwen2.5-3B</span><span class="chip">LoRA</span>
-        <span class="chip">Hugging Face</span><span class="chip">PyTorch</span>
-      </div>
-      <a class="project-link" href="https://github.com/Bharathkondur/FineTuned-Energy-LLM" target="_blank" rel="noreferrer">View on GitHub</a>
-    </article>
-
-    <article class="project-card">
-      <div class="project-num">03</div>
-      <p class="project-meta">Multimodal AI &middot; Integration</p>
-      <h3>Scene Intelligence Platform</h3>
-      <p class="proj-desc">Real-time scene intelligence platform with a six-stage async pipeline, WebSocket dashboard, PostgreSQL/Redis storage, and an agentic chat layer over live detections. Strong evidence for integrating AI modules into end-to-end systems.</p>
-      <div class="project-metrics">
-        <div class="proj-metric"><div class="proj-metric-num">6-stage</div><div class="proj-metric-label">Async pipeline</div></div>
-        <div class="proj-metric"><div class="proj-metric-num">FastAPI</div><div class="proj-metric-label">System API</div></div>
-      </div>
-      <div class="chips">
-        <span class="chip primary">FastAPI</span><span class="chip">YOLOv8</span>
-        <span class="chip">DeepSORT</span><span class="chip">PostgreSQL</span>
-        <span class="chip">Redis</span><span class="chip">Docker</span>
-      </div>
-      <a class="project-link" href="https://github.com/Bharathkondur/Multimodal-Traffic-Intelligence-platform" target="_blank" rel="noreferrer">View on GitHub</a>
-    </article>
-
-    <article class="project-card">
-      <div class="project-num">04</div>
-      <p class="project-meta">Local AI &middot; Product Engineering</p>
-      <h3>Momentum / Focus Tracker</h3>
-      <p class="proj-desc">Local-first Windows productivity app with on-device ML intent classification. Routes natural-language captures into tasks, goals, or notes using deterministic rules, date parsing, local memory, and a compact local model.</p>
-      <div class="project-metrics">
-        <div class="proj-metric"><div class="proj-metric-num">Local</div><div class="proj-metric-label">No cloud runtime</div></div>
-        <div class="proj-metric"><div class="proj-metric-num">SQLite</div><div class="proj-metric-label">Data layer</div></div>
-      </div>
-      <div class="chips">
-        <span class="chip primary">Python</span><span class="chip">PySide6</span>
-        <span class="chip">SQLite</span><span class="chip">PyTorch</span>
-        <span class="chip">Tokenizers</span><span class="chip">PyInstaller</span>
-      </div>
-      <a class="project-link" href="https://github.com/Bharathkondur/Focus_tracker" target="_blank" rel="noreferrer">View on GitHub</a>
-    </article>
-
-  </div>
-</section>
-
-<section id="experience">
-  <div class="section-head">
-    <span class="kicker">04 &middot; Journey</span>
-    <h2>AI delivery across <em>systems</em></h2>
-    <p>Production AI experience with the implementation discipline needed for consulting work: model workflows, APIs, data layers, containers, observability, and cross-functional delivery.</p>
-  </div>
-
-  <div class="timeline">
-
-    <div class="tl-item">
-      <div class="tl-header">
-        <h3>ML &amp; Computer Vision Engineer</h3>
-        <span class="tl-company">Project Consulting Srl &middot; Rome, Italy</span>
-        <span class="tl-period">Nov 2022 - Present</span>
-      </div>
-      <ul class="tl-bullets">
-        <li>Built LLM-powered workflows with LangChain, LangGraph, Hugging Face, Ollama, Claude, Codex, and Cursor, including self-correction patterns for retrieval, grading, query rewrite, and grounded answer generation.</li>
-        <li>Designed production AI modules for pose estimation, OCR, object detection, streaming analytics, vehicle plate detection, and human tracking.</li>
-        <li>Integrated AI services through FastAPI, async Python, REST/WebSocket interfaces, MQTT event messaging, PostgreSQL, MongoDB, MinIO, and SQLAlchemy-backed data layers.</li>
-        <li>Containerized and operated AI workloads with Docker, Kubernetes, GitHub Actions, GitLab CI/CD, AWS, Azure, Linux, Grafana, Prometheus, structured logging, and inference monitoring.</li>
-        <li>Optimised real-time inference with ONNX, TensorRT, FP16/INT8 quantisation, async processing, and RTSP/IoT stream handling.</li>
-      </ul>
-    </div>
-
-    <div class="tl-item">
-      <div class="tl-header">
-        <h3>Research Intern &middot; Energy Systems</h3>
-        <span class="tl-company">ENEA Frascati Research Centre &middot; Rome, Italy</span>
-        <span class="tl-period">Sep 2021 - Jul 2022</span>
-      </div>
-      <ul class="tl-bullets">
-        <li>Developed regression, SVM, and neural network models in Python and R for renewable energy LCOE forecasting; thesis: "Improving Accuracy in LCOE Estimation using Machine Learning."</li>
-        <li>Built reproducible ML experimentation workflows with structured evaluation for energy investment modelling at ENEA and MSc research at Sapienza University of Rome.</li>
-      </ul>
-    </div>
-
-    <div class="tl-item">
-      <div class="tl-header">
-        <h3>Electronics Engineer &middot; Telecom Manufacturing</h3>
-        <span class="tl-company">ECIL &middot; Hyderabad, India</span>
-        <span class="tl-period">Jan 2017 - Aug 2018</span>
-      </div>
-      <ul class="tl-bullets">
-        <li>C-DOT MAX-NG NGN programme: manufacturing gateway hardware enabling PSTN-to-VoIP migration for BSNL's national infrastructure.</li>
-        <li>Led a team of 10 engineers in hardware debugging, PCB fault isolation, S&amp;A device validation, electronic timer calibration, and quality assurance across strategic national programmes.</li>
-        <li>Owned product lifecycle work from SMT assembly and subsystem integration through functional testing and QA sign-off.</li>
-      </ul>
-    </div>
-
-  </div>
-</section>
-
-<section>
-  <div class="positioning">
-    <article class="position-card glow">
-      <span class="kicker">05 &middot; Consulting Fit</span>
-      <h3>What I bring to a Telco GenAI team</h3>
-      <p>Hands-on GenAI engineering with production delivery habits: translate requirements into custom AI modules, build agent flows, optimize RAG quality, integrate data sources, containerize workloads, and communicate clearly across European and Indian teams.</p>
-      <div class="chips">
-        <span class="chip primary">GenAI Engineer</span>
-        <span class="chip primary">AI Engineer</span>
-        <span class="chip primary">RAG Engineer</span>
-        <span class="chip">MLOps Engineer</span>
-        <span class="chip">Telco AI</span>
-        <span class="chip">AI Consulting</span>
-      </div>
-    </article>
-
-    <aside class="terminal">
-      <div class="terminal-bar">
-        <span class="tdot"></span><span class="tdot"></span><span class="tdot"></span>
-        <span style="margin-left: 8px; color: var(--muted); font-size: 11px;">availability.sh</span>
-      </div>
-      <div class="terminal-body">
-        <span class="term-line"><span class="term-prompt">$ </span><span class="term-cmd">match --role genai-engineer</span></span>
-        <span class="term-line"><span class="term-out">name      </span><span class="term-val">Bharath Kumar Kondur</span></span>
-        <span class="term-line"><span class="term-out">role      </span><span class="term-val">GenAI / AI MLOps</span></span>
-        <span class="term-line"><span class="term-out">location  </span><span class="term-val">Rome, Italy</span></span>
-        <span class="term-line"><span class="term-out">mode      </span><span class="term-val">full remote + onsite</span></span>
-        <span class="term-line"><span class="term-out">language  </span><span class="term-val">English &middot; Italian</span></span>
-        <span class="term-line"><span class="term-out">github    </span><span class="term-val">7 public repos</span></span>
-        <span class="term-line"><span class="term-out">avail     </span><span class="term-val green">interview-ready</span></span>
-        <span class="term-line"><span class="term-prompt">$ </span><span class="cursor-blink"></span></span>
-      </div>
-    </aside>
-  </div>
-</section>
-
-<section id="contact">
-  <div class="section-head">
-    <span class="kicker">06 &middot; Contact</span>
-    <h2>Ready for a <em>GenAI conversation</em></h2>
-    <p>Best fit: GenAI Engineer roles focused on LangChain/LangGraph agents, RAG optimisation, Dockerized AI workloads, data pipelines, system integration, and Telco consulting delivery from Rome.</p>
-  </div>
-
-  <div class="contact-grid">
-    <article class="contact-card">
-      <h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 14px;">Direct contact</h3>
-      <p style="color: var(--ink-2); font-weight: 300;">Available for Rome-based or full-remote GenAI roles with occasional onsite presence. Comfortable collaborating in English with European and Indian teams.</p>
-      <div class="contact-list">
-        <a href="mailto:bharathkumarkondur@gmail.com">
-          <span>Email</span><strong>bharathkumarkondur@gmail.com</strong>
-        </a>
-        <a href="Bharath_Kondur_AI_Engineer.pdf" download>
-          <span>CV</span><strong>Download CV</strong>
-        </a>
-        <a href="https://github.com/Bharathkondur" target="_blank" rel="noreferrer">
-          <span>GitHub</span><strong>github.com/Bharathkondur</strong>
-        </a>
-        <a href="https://www.linkedin.com/in/bharathkumar-kondur-300597111/" target="_blank" rel="noreferrer">
-          <span>LinkedIn</span><strong>linkedin.com/in/bharathkumar-kondur</strong>
-        </a>
-        <div class="contact-list-item">
-          <span>Phone</span><strong>+39 389 148 5034</strong>
+  </header>
+  <main id="main">
+    <section class="hero container" aria-labelledby="hero-title">
+      <p class="eyebrow accent">AI / MACHINE LEARNING ENGINEER</p>
+      <h1 id="hero-title">Bharath Kumar <br class="name-break">Kondur<span class="name-period">.</span></h1>
+      <p class="hero-statement">I build AI systems that survive contact with production.</p>
+      <p class="hero-summary">4+ years across applied AI and machine learning: production OCR, live RAG applications, and complete ML model lifecycles.</p>
+      <p class="hero-disciplines">GenAI <span aria-hidden="true">/</span> MLOps <span aria-hidden="true">/</span> Retrieval <span aria-hidden="true">/</span> Production ML</p>
+      <div class="hero-actions">
+        <a class="button primary" href="https://thenfold.com/" target="_blank" rel="noopener noreferrer">View Thenfold <img class="icon" src="assets/icons/arrow-up-right.svg" width="18" height="18" alt=""></a>
+        <a class="button secondary" href="https://github.com/Bharathkondur/power-grid-ai-platform" target="_blank" rel="noopener noreferrer">View GridPulse <img class="icon" src="assets/icons/arrow-up-right.svg" width="18" height="18" alt=""></a>
+        <div class="profile-links">
+          <a href="https://github.com/Bharathkondur" target="_blank" rel="noopener noreferrer">GitHub <img class="icon" src="assets/icons/arrow-up-right.svg" width="14" height="14" alt=""></a>
+          <a href="https://www.linkedin.com/in/bharathkumar-kondur-300597111/" target="_blank" rel="noopener noreferrer">LinkedIn <img class="icon" src="assets/icons/arrow-up-right.svg" width="14" height="14" alt=""></a>
+          <a href="Bharath_Kondur_AI_Engineer.pdf" download>Download CV <img class="icon" src="assets/icons/download.svg" width="15" height="15" alt=""></a>
         </div>
       </div>
-    </article>
+      <dl class="hero-proof">
+        <div><dt>Applied AI &amp; ML</dt><dd>4+ <span>years</span></dd></div>
+        <div><dt>Thenfold</dt><dd>Live <span>product</span></dd></div>
+        <div><dt>Production OCR</dt><dd><a href="#ocr-proof">~95% <span>recognition accuracy</span></a></dd></div>
+      </dl>
+    </section>
 
-    <aside class="contact-card">
-      <h3 style="font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 14px;">Most relevant proof</h3>
-      <p style="color: var(--ink-2); font-weight: 300; margin-bottom: 18px;">Self-Correcting RAG for Docs: a LangGraph-based retrieve, grade, rewrite, generate loop that demonstrates the exact agentic logic and RAG optimisation patterns needed for custom GenAI delivery.</p>
-      <div class="chips" style="margin-bottom: 24px;">
-        <span class="chip primary">LangGraph</span><span class="chip primary">RAG</span>
-        <span class="chip">FastAPI</span><span class="chip">Docker</span>
+    <section class="work section container" id="work" aria-labelledby="work-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">01 / SELECTED WORK</p><h2 id="work-title">Built. Shipped. Measured.</h2></div>
+        <p class="section-aside">GenAI retrieval and the<br>complete ML lifecycle.</p>
       </div>
-      <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 600; margin-bottom: 10px; color: var(--muted);">Languages</h3>
-      <div class="chips">
-        <span class="chip">English</span><span class="chip">Italian</span>
-        <span class="chip">Hindi</span><span class="chip">Telugu</span>
+
+      <article class="case-study thenfold" id="thenfold" aria-labelledby="thenfold-title">
+        <div class="project-topline"><p class="eyebrow">GENAI / RETRIEVAL / PRIVACY</p><span class="project-status">Live product</span></div>
+        <div class="case-grid">
+          <div class="project-content">
+            <h3 id="thenfold-title" class="project-name">Thenfold</h3>
+            <p class="project-headline">Private memory infrastructure for how your thinking evolves.</p>
+            <p class="project-description">Personal knowledge changes over time. I designed and shipped a memory platform that retrieves the right moment, answers with original evidence, and separates local and cloud AI execution.</p>
+            <dl class="project-proof"><div><dt>Automated tests</dt><dd>157</dd></div><div><dt>Execution paths</dt><dd>Local + cloud</dd></div></dl>
+            <a class="text-link" href="https://thenfold.com/" target="_blank" rel="noopener noreferrer">Open Thenfold <img class="icon" src="assets/icons/arrow-up-right.svg" width="18" height="18" alt=""></a>
+          </div>
+          <figure class="project-media">
+            <a href="https://thenfold.com/#how" target="_blank" rel="noopener noreferrer" aria-label="Explore Thenfold's public timeline demo"><img src="assets/thenfold-timeline.webp" width="890" height="550" loading="lazy" decoding="async" alt="Thenfold's public demo traces one idea through four dated memories, with the original source visible."></a>
+            <figcaption>Public timeline demo &middot; fictional example memories &middot; <a href="https://thenfold.com/#how" target="_blank" rel="noopener noreferrer">thenfold.com</a></figcaption>
+          </figure>
+        </div>
+        <div class="decisions-grid">
+          <div><h4>Engineering decisions</h4><ul class="decisions">
+            <li><strong>Retrieve before vector indexing completes.</strong> Combine Pinecone semantic search with an owner-scoped PostgreSQL keyword path.</li>
+            <li><strong>Handle time deterministically.</strong> Resolve first/latest, before/after and date-range questions before building source context.</li>
+            <li><strong>Keep the account boundary intact.</strong> Use Supabase RLS, isolated vector namespaces, verified sessions and a Memory OFF boundary.</li>
+            <li><strong>Reject invalid evidence.</strong> Attach source IDs to generated paragraphs and construct the final answer through server-side citation validation.</li>
+          </ul></div>
+          <div class="engineering-note"><h4>Privacy and validation</h4><p>AES-256-GCM encryption for local IndexedDB storage. Qwen via WebLLM/WebGPU for local inference; Gemini via OpenRouter for cloud inference.</p><p>Cloud text AI requires ZDR-compatible routing. Cross-account retrieval and Memory OFF are tested. AI receives bounded source context, and original memories remain inspectable.</p><p class="stack"><span>Built with</span>Next.js &middot; TypeScript &middot; Supabase / PostgreSQL &middot; Pinecone &middot; MiniLM &middot; Transformers.js / ONNX &middot; Vercel</p></div>
+        </div>
+        <figure class="architecture">
+          <figcaption><span>System architecture</span><span class="architecture-tag">Source-grounded by design</span></figcaption>
+          <ol class="flow">
+            <li><span class="step-number">01</span><strong>User + AI mode</strong><span>Local or cloud execution</span></li>
+            <li><span class="step-number">02</span><strong>Intent + retrieval</strong><span>Pinecone semantic search<br>Owner-scoped keyword search</span></li>
+            <li><span class="step-number">03</span><strong>Temporal selection</strong><span>Dates, first/latest, before/after</span></li>
+            <li><span class="step-number">04</span><strong>Bounded context</strong><span>Relevant, owned sources only</span></li>
+            <li><span class="step-number">05</span><strong>AI generation</strong><span>Gemini / cloud<br>Qwen / local</span></li>
+            <li><span class="step-number">06</span><strong>Validated answer</strong><span>Citation checks + original evidence</span></li>
+          </ol>
+        </figure>
+      </article>
+
+      <article class="case-study gridpulse" id="gridpulse" aria-labelledby="gridpulse-title">
+        <div class="project-topline"><p class="eyebrow">ENERGY ML / MLOPS / MODEL OPERATIONS</p><span class="project-status">Personal engineering project</span></div>
+        <div class="case-grid reversed">
+          <div class="project-content">
+            <h3 id="gridpulse-title" class="project-name">GridPulse AI</h3>
+            <p class="project-headline">From electricity data to monitored ML deployment and rollback.</p>
+            <p class="project-description">Forecast the next 24 hours of German electricity demand. I built the lifecycle around the model: validation, experiment tracking, gated promotion, API serving, drift monitoring, retraining and recovery.</p>
+            <dl class="project-proof"><div><dt>Public-data test MAPE</dt><dd>3.46%</dd></div><div><dt>Python tests</dt><dd>35</dd></div></dl>
+            <a class="text-link" href="https://github.com/Bharathkondur/power-grid-ai-platform" target="_blank" rel="noopener noreferrer">Inspect the repository <img class="icon" src="assets/icons/arrow-up-right.svg" width="18" height="18" alt=""></a>
+          </div>
+          <figure class="project-media">
+            <a href="https://github.com/Bharathkondur/power-grid-ai-platform/blob/main/docs/verification.md" target="_blank" rel="noopener noreferrer" aria-label="Read GridPulse's deployment and monitoring verification"><img src="assets/gridpulse-dashboard.webp" width="1265" height="711" loading="lazy" decoding="async" alt="Actual GridPulse Grafana dashboard showing measured forecast, model drift and delayed-label accuracy signals."></a>
+            <figcaption>Local Grafana demonstration &middot; synthetic-data replay &middot; <a href="https://github.com/Bharathkondur/power-grid-ai-platform/blob/main/docs/verification.md" target="_blank" rel="noopener noreferrer">verification record</a></figcaption>
+          </figure>
+        </div>
+        <div class="decisions-grid">
+          <div><h4>Engineering decisions</h4><ul class="decisions">
+            <li><strong>Evaluate in chronological order.</strong> Compare XGBoost with weekly persistence; use only demand and weather available at the forecast origin.</li>
+            <li><strong>Gate every promotion.</strong> Move MLflow candidates through validation and staging to champion; retain the previous model for recovery.</li>
+            <li><strong>Monitor more than uptime.</strong> Track PSI drift, prediction distributions, delayed-label MAE/RMSE, latency, errors and model version.</li>
+            <li><strong>Exercise failure paths.</strong> Test candidate rejection, controlled retraining, rollback and pod recovery in local Docker / kind deployments.</li>
+          </ul></div>
+          <div class="benchmark">
+            <table><caption>Public-data benchmark</caption><thead><tr><th scope="col">Test metric</th><th scope="col">XGBoost</th><th scope="col">Weekly baseline</th></tr></thead><tbody>
+              <tr><th scope="row">MAE</th><td>1,885 MW</td><td>2,023 MW</td></tr>
+              <tr><th scope="row">RMSE</th><td>2,380 MW</td><td>&mdash;</td></tr>
+              <tr><th scope="row">MAPE</th><td>3.46%</td><td>&mdash;</td></tr>
+            </tbody></table>
+            <p class="benchmark-scope">Limited 90-day portfolio benchmark: 2,160 hourly OPSD observations, January&ndash;March 2019. Test period: 19&ndash;31 March. Open-Meteo weather uses Berlin as a proxy.</p>
+            <p class="benchmark-scope">Demonstrated locally with Docker and Kubernetes / kind. This is a personal project, not a live grid-operator deployment.</p>
+            <a class="inline-link" href="https://github.com/Bharathkondur/power-grid-ai-platform/actions/workflows/ci.yml" target="_blank" rel="noopener noreferrer">CI: tests, Ruff, audits, Trivy, Compose and kind checks <img class="icon" src="assets/icons/arrow-up-right.svg" width="14" height="14" alt=""></a>
+          </div>
+        </div>
+        <figure class="architecture">
+          <figcaption><span>Model lifecycle</span><span class="architecture-tag">Validate &rarr; promote &rarr; observe &rarr; recover</span></figcaption>
+          <ol class="flow">
+            <li><span class="step-number">01</span><strong>Acquire + validate</strong><span>OPSD / Open-Meteo<br>PostgreSQL</span></li>
+            <li><span class="step-number">02</span><strong>Features + model</strong><span>Origin-safe lags / calendar<br>XGBoost</span></li>
+            <li><span class="step-number">03</span><strong>Track + register</strong><span>MLflow experiments<br>Candidate model</span></li>
+            <li><span class="step-number">04</span><strong>Gate + promote</strong><span>Validation / staging<br>Champion + previous</span></li>
+            <li><span class="step-number">05</span><strong>Serve + deploy</strong><span>FastAPI / Docker<br>Kubernetes / Helm</span></li>
+            <li><span class="step-number">06</span><strong>Monitor + recover</strong><span>Prometheus / Grafana<br>Drift, retraining, rollback</span></li>
+          </ol>
+        </figure>
+        <p class="stack project-stack"><span>Built with</span>Python &middot; XGBoost &middot; MLflow &middot; FastAPI &middot; PostgreSQL &middot; MQTT &middot; Docker &middot; Kubernetes / kind &middot; Helm &middot; GitHub Actions</p>
+      </article>
+    </section>
+
+    <section class="experience section section-band" id="experience" aria-labelledby="experience-title">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow">02 / PRODUCTION EXPERIENCE</p><h2 id="experience-title">Applied AI, in operation.</h2></div></div>
+        <div class="experience-grid">
+          <div class="experience-main"><p class="eyebrow accent">PROJECT CONSULTING SRL &middot; ROME</p><h3>AI &amp; Computer Vision Engineer</h3><p class="experience-period">November 2022 &ndash; June 2026 <span>/ Generative AI &amp; Applied AI</span></p>
+            <ul class="experience-list"><li>Built a production conversational assistant for video security and incident intelligence, with structured retrieval, semantic search and grounded LLM answers.</li><li>Designed asynchronous Python / FastAPI services integrating MongoDB, REST / WebSocket APIs and LangChain / LangGraph workflows.</li><li>Added Langfuse tracing and evaluation; operated containerized AI services with Docker, Kubernetes, CI/CD and Prometheus / Grafana.</li></ul>
+          </div>
+          <aside class="ocr-proof" id="ocr-proof" aria-labelledby="ocr-title"><p class="eyebrow">PRODUCTION ML PROOF</p><p class="ocr-number">~95<span>%</span></p><h3 id="ocr-title">Vehicle licence-plate OCR</h3><p>Developed a custom recognition model from scratch and deployed it into the production monitoring platform.</p><p class="scope-note">Recognition accuracy measured on internal evaluation.</p></aside>
+        </div>
+        <div class="independent-row"><div><p class="eyebrow">INDEPENDENT AI ENGINEERING</p><p>July 2026 &ndash; present</p></div><p>Thenfold and GridPulse AI. Independently built products and personal engineering work.</p></div>
       </div>
-    </aside>
-  </div>
-</section>
+    </section>
 
-</main>
+    <section class="expertise section container" id="expertise" aria-labelledby="expertise-title">
+      <div class="section-heading"><div><p class="eyebrow">03 / CORE EXPERTISE</p><h2 id="expertise-title">Models, services and operations.</h2></div></div>
+      <div class="expertise-grid">
+        <div><span class="capability-number">01</span><h3>LLM &amp; AI Engineering</h3><p>Grounded retrieval, agent workflows, tool calling and evaluation.</p><p class="tools">Python &middot; FastAPI &middot; RAG &middot; LangChain / LangGraph &middot; Pinecone &middot; OpenRouter &middot; Gemini / Qwen &middot; LLM evaluation</p></div>
+        <div><span class="capability-number">02</span><h3>Machine Learning &amp; MLOps</h3><p>Reproducible evaluation, controlled promotion and model recovery.</p><p class="tools">XGBoost &middot; PyTorch &middot; MLflow &middot; Model registry &middot; Drift detection &middot; Docker &middot; Kubernetes &middot; Helm</p></div>
+        <div><span class="capability-number">03</span><h3>Platform &amp; Data</h3><p>Reliable services and data boundaries that support AI workloads.</p><p class="tools">PostgreSQL &middot; MongoDB &middot; Supabase &middot; Redis &middot; MQTT &middot; REST / WebSockets &middot; GitHub Actions / GitLab CI</p></div>
+        <div><span class="capability-number">04</span><h3>Observability &amp; Production</h3><p>Traceable answers, measurable model behavior and tested failure paths.</p><p class="tools">Prometheus &middot; Grafana &middot; Langfuse &middot; Structured logging &middot; Model monitoring &middot; Security validation &middot; Automated testing</p></div>
+      </div>
+    </section>
 
-<footer>
-  <span>© 2026 Bharath Kumar Kondur</span>
-  <span>AI / MLOps Engineer · Rome, Italy</span>
-  <span>Built with care.</span>
-</footer>
+    <section class="energy section section-band" id="energy" aria-labelledby="energy-title">
+      <div class="container">
+        <div class="section-heading"><div><p class="eyebrow">04 / ENERGY + ML BACKGROUND</p><h2 id="energy-title">A domain behind the models.</h2></div><p class="section-aside">Energy engineering meets<br>quantitative ML evaluation.</p></div>
+        <div class="energy-grid"><div><p class="eyebrow">ENEA &middot; ROME</p><h3>Machine Learning for Energy Systems</h3><p class="experience-period">September 2021 &ndash; July 2022 <span>/ Internship</span></p><p>Built and evaluated machine-learning models for renewable-energy LCOE estimation, with quantitative error comparisons and techno-economic analysis.</p></div><div><p class="eyebrow">SAPIENZA UNIVERSITY OF ROME</p><h3>MSc Energy Engineering</h3><p class="experience-period">July 2022</p><p>Thesis: <cite>Improving Accuracy in LCOE Estimation using Machine Learning.</cite></p><p class="education-secondary">BTech Electrical &amp; Electronics Engineering<br>JNTUH, Hyderabad &middot; June 2016</p></div></div>
+      </div>
+    </section>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-(function() {
-  const canvas = document.getElementById('bg-canvas');
-  const scene = new THREE.Scene();
-  scene.fog = new THREE.FogExp2(0x050608, 0.025);
+    <section class="about section container" id="about" aria-labelledby="about-title">
+      <div class="about-grid"><div><p class="eyebrow">05 / ENGINEERING PHILOSOPHY</p><h2 id="about-title">The model is one<br>part of the system.</h2></div><div><p class="about-copy">I work across retrieval, model development and the infrastructure that makes AI dependable. I care about the boundary conditions: whose data is retrieved, how an answer is checked, when a model is promoted, and what happens when it fails.</p><p class="about-copy">My energy engineering background keeps the work tied to a measurable problem. My production AI experience keeps evaluation, integration and operations in the same conversation.</p><p class="languages">English: fluent &middot; Italian: B2 &middot; Hindi &middot; Telugu</p></div></div>
+      <div class="principles"><p><span>01</span>Original evidence, inspectable.</p><p><span>02</span>Models, measured against a baseline.</p><p><span>03</span>Failure paths, tested before promotion.</p></div>
+    </section>
 
-  const camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 28;
-
-  const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-  const particleCount = 800;
-  const particleGeo = new THREE.BufferGeometry();
-  const positions = new Float32Array(particleCount * 3);
-  const colors = new Float32Array(particleCount * 3);
-
-  const palette = [
-    new THREE.Color(0x4dd9ff),
-    new THREE.Color(0xa584ff),
-    new THREE.Color(0x5cf5a4),
-    new THREE.Color(0xffb946),
-  ];
-
-  for (let i = 0; i < particleCount; i++) {
-    positions[i*3]   = (Math.random() - 0.5) * 80;
-    positions[i*3+1] = (Math.random() - 0.5) * 60;
-    positions[i*3+2] = (Math.random() - 0.5) * 60;
-    const c = palette[Math.floor(Math.random() * palette.length)];
-    colors[i*3]   = c.r;
-    colors[i*3+1] = c.g;
-    colors[i*3+2] = c.b;
-  }
-  particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  particleGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-  const particleMat = new THREE.PointsMaterial({
-    size: 0.18,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.65,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-  });
-  const particles = new THREE.Points(particleGeo, particleMat);
-  scene.add(particles);
-
-  const icoGeo = new THREE.IcosahedronGeometry(8, 1);
-  const icoMat = new THREE.MeshBasicMaterial({
-    color: 0x4dd9ff, wireframe: true,
-    transparent: true, opacity: 0.18,
-  });
-  const ico = new THREE.Mesh(icoGeo, icoMat);
-  scene.add(ico);
-
-  const innerGeo = new THREE.IcosahedronGeometry(7.5, 0);
-  const innerMat = new THREE.MeshBasicMaterial({
-    color: 0xa584ff, wireframe: true,
-    transparent: true, opacity: 0.08,
-  });
-  const inner = new THREE.Mesh(innerGeo, innerMat);
-  scene.add(inner);
-
-  // Connecting lines between random particles
-  const lineMat = new THREE.LineBasicMaterial({
-    color: 0x4dd9ff, transparent: true,
-    opacity: 0.12, blending: THREE.AdditiveBlending,
-  });
-  const linePositions = [];
-  for (let i = 0; i < 60; i++) {
-    const a = Math.floor(Math.random() * particleCount);
-    const b = Math.floor(Math.random() * particleCount);
-    linePositions.push(
-      positions[a*3], positions[a*3+1], positions[a*3+2],
-      positions[b*3], positions[b*3+1], positions[b*3+2]
-    );
-  }
-  const lineGeo = new THREE.BufferGeometry();
-  lineGeo.setAttribute('position', new THREE.BufferAttribute(new Float32Array(linePositions), 3));
-  const connectionLines = new THREE.LineSegments(lineGeo, lineMat);
-  scene.add(connectionLines);
-
-  // Mouse parallax
-  const mouse = { x: 0, y: 0, tx: 0, ty: 0 };
-  window.addEventListener('mousemove', e => {
-    mouse.tx = (e.clientX / window.innerWidth - 0.5) * 2;
-    mouse.ty = (e.clientY / window.innerHeight - 0.5) * 2;
-  });
-
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-
-  let frame = 0;
-  function animate() {
-    frame++;
-    mouse.x += (mouse.tx - mouse.x) * 0.05;
-    mouse.y += (mouse.ty - mouse.y) * 0.05;
-
-    ico.rotation.x += 0.0015;
-    ico.rotation.y += 0.002;
-    inner.rotation.x -= 0.001;
-    inner.rotation.y -= 0.0015;
-
-    particles.rotation.y += 0.0004;
-    connectionLines.rotation.y += 0.0004;
-
-    camera.position.x += (mouse.x * 4 - camera.position.x) * 0.04;
-    camera.position.y += (-mouse.y * 3 - camera.position.y) * 0.04;
-    camera.lookAt(0, 0, 0);
-
-    icoMat.opacity = 0.15 + Math.sin(frame * 0.01) * 0.05;
-    lineMat.opacity = 0.08 + Math.sin(frame * 0.008) * 0.05;
-
-    renderer.render(scene, camera);
-    requestAnimationFrame(animate);
-  }
-  animate();
-})();
-
-document.querySelectorAll('a[href^="#"]').forEach(link => {
-  link.addEventListener('click', e => {
-    const target = document.querySelector(link.getAttribute('href'));
-    if (!target) return;
-    e.preventDefault();
-    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
-</script>
-
+    <section class="contact section section-band" id="contact" aria-labelledby="contact-title">
+      <div class="container"><div class="contact-top"><div><p class="eyebrow">06 / CONTACT</p><h2 id="contact-title">Let&#39;s talk.</h2><p>GenAI, machine learning and MLOps roles.<br>Based in Rome, Italy. Open to remote opportunities.</p></div><a class="button primary" href="mailto:bharathkumarkondur@gmail.com"><img class="icon" src="assets/icons/mail.svg" width="18" height="18" alt=""> Get in touch</a></div>
+        <a class="email-link" href="mailto:bharathkumarkondur@gmail.com">bharathkumarkondur@gmail.com <img class="icon" src="assets/icons/arrow-up-right.svg" width="24" height="24" alt=""></a>
+        <div class="contact-links"><a href="https://www.linkedin.com/in/bharathkumar-kondur-300597111/" target="_blank" rel="noopener noreferrer">LinkedIn <img class="icon" src="assets/icons/arrow-up-right.svg" width="16" height="16" alt=""></a><a href="https://github.com/Bharathkondur" target="_blank" rel="noopener noreferrer">GitHub <img class="icon" src="assets/icons/arrow-up-right.svg" width="16" height="16" alt=""></a><a href="Bharath_Kondur_AI_Engineer.pdf" download>Download CV <img class="icon" src="assets/icons/download.svg" width="16" height="16" alt=""></a><span>Rome, Italy</span></div>
+      </div>
+    </section>
+  </main>
+  <footer class="container footer"><p>&copy; 2026 Bharath Kumar Kondur</p><p>AI / ML Engineer &middot; GenAI &amp; MLOps</p><a href="#main">Back to top <img class="icon" src="assets/icons/arrow-up-right.svg" width="14" height="14" alt=""></a></footer>
 </body>
 </html>
